@@ -1,0 +1,5 @@
+group_bonus.group_of_node:
+  title: 'Group'
+  base_route: 'entity.node.canonical'
+  route_name: 'group_bonus.group_of_node'
+  weight: 30

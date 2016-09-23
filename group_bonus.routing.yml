@@ -1,0 +1,7 @@
+group_bonus.group_of_node:
+  path: '/node/{node}/group'
+  defaults:
+    _controller: '\Drupal\group_bonus\Controller\GroupBonusRedirectToGroup::redirectToGroup'
+    _title: 'Redirect to group'
+  requirements:
+    _custom_access: '\Drupal\group_bonus\Controller\GroupBonusRedirectToGroup::redirectAccess'
