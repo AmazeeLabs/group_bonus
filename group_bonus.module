@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ *  Adds some bonus features to the group module in D8.
+ */
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function group_bonus_form_group_content_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Add an additional submit handler that will alter the redirect of the form.
+  $form['actions']['submit']['#submit'][] = 'group_bonus_group_content_form_submit';
+}
+
+/**
+ * Additional submit handler for group content forms that will redirect the user
+ * to the content (node) page after saving it instead of the redirect to the
+ * group content entity view page.
+ */
+function group_bonus_group_content_form_submit(array $form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $entity = $form_state->getFormObject()->getEntity()->get('entity_id')->referencedEntities();
+  if (!empty($entity)) {
+    $entity = reset($entity);
+    // Although this is easy to implement for any content type, we do it only
+    // for nodes, becasue we are sure that we have a full page view for them.
+    if ($entity instanceof \Drupal\node\NodeInterface) {
+      $route_params = ['node' => $entity->id()];
+      $form_state->setRedirect('entity.node.canonical', $route_params);
+    }
+  }
+}
