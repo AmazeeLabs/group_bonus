@@ -30,3 +30,35 @@ function group_bonus_group_content_form_submit(array $form, \Drupal\Core\Form\Fo
     }
   }
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function group_bonus_group_content_update(\Drupal\group\Entity\GroupContentInterface $entity) {
+  group_bonus_invalidate_cache_for_group_content($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function group_bonus_group_content_insert(\Drupal\group\Entity\GroupContentInterface $entity) {
+  group_bonus_invalidate_cache_for_group_content($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function group_bonus_group_content_delete(\Drupal\group\Entity\GroupContentInterface $entity) {
+  group_bonus_invalidate_cache_for_group_content($entity);
+}
+
+/**
+ * Invalidates the cache tags for the group of a group content entity.
+ *
+ * @param \Drupal\group\Entity\GroupContentInterface $entity
+ *  The group content entity.
+ */
+function group_bonus_invalidate_cache_for_group_content(\Drupal\group\Entity\GroupContentInterface $entity) {
+  $group = $entity->getGroup();
+  \Drupal\Core\Cache\Cache::invalidateTags(array('group:' . $group->id()));
+}
