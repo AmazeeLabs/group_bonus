@@ -62,3 +62,26 @@ function group_bonus_invalidate_cache_for_group_content(\Drupal\group\Entity\Gro
   $group = $entity->getGroup();
   \Drupal\Core\Cache\Cache::invalidateTags(array('group:' . $group->id()));
 }
+
+/**
+ * Implements hook_entity_presave().
+ */
+function group_bonus_entity_presave(Drupal\Core\Entity\EntityInterface $entity) {
+  // If the entity has the field_search_title available, then we will populate
+  // it with the title of the entity (label) and append the name of the group,
+  // if the entity is part of a group.
+  if ($entity instanceof \Drupal\Core\Entity\FieldableEntityInterface) {
+    if ($entity->hasField('field_search_title')) {
+      $new_field_value = $entity->label();
+      if (!$entity->isNew()) {
+        $group_content = \Drupal\group\Entity\GroupContent::loadByEntity($entity);
+        if (!empty($group_content)) {
+          /* @var \Drupal\group\Entity\GroupContentInterface $group_content */
+          $group_content = reset($group_content);
+          $new_field_value .= ' ' . $group_content->getGroup()->label();
+        }
+      }
+      $entity->set('field_search_title', $new_field_value);
+    }
+  }
+}
